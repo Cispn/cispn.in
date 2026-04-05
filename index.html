@@ -155,116 +155,136 @@ html,body{height:100%;background:#080810;overflow:hidden}
 <script>
 // ── YouTube Player ─────────────────────────────────────
 var ytPlayer;
+var ytReady = false;
+
 function onYouTubeIframeAPIReady(){
-  ytPlayer=new YT.Player('player',{
-    videoId:'izXP5DV82AA',
-    playerVars:{
-      autoplay:1,mute:1,controls:0,loop:1,
-      playlist:'izXP5DV82AA',
-      playsinline:1,rel:0,showinfo:0,
-      modestbranding:1,iv_load_policy:3,disablekb:1
+  ytPlayer = new YT.Player('player', {
+    videoId: 'izXP5DV82AA',
+    playerVars: {
+      autoplay: 1,
+      mute: 1,          // start muted so browser allows autoplay
+      controls: 0,
+      loop: 1,
+      playlist: 'izXP5DV82AA',
+      playsinline: 1,
+      rel: 0,
+      showinfo: 0,
+      modestbranding: 1,
+      iv_load_policy: 3,
+      disablekb: 1
     },
-    events:{onReady:function(e){e.target.setVolume(0);e.target.playVideo();}}
+    events: {
+      onReady: function(e) {
+        e.target.playVideo();
+        ytReady = true;
+      }
+    }
   });
 }
 
 // ── Lines canvas ───────────────────────────────────────
-const lc=document.getElementById('lc'),lctx=lc.getContext('2d');
-function resizeLc(){lc.width=innerWidth;lc.height=innerHeight;}
-resizeLc();window.addEventListener('resize',resizeLc);
+const lc = document.getElementById('lc'), lctx = lc.getContext('2d');
+function resizeLc(){ lc.width = innerWidth; lc.height = innerHeight; }
+resizeLc(); window.addEventListener('resize', resizeLc);
 
-const CARD_IDS=['c-zodiac','c-interests','c-lang','c-time','c-age','c-last','c-status'];
-let prog=0,animating=false,targets=[];
+const CARD_IDS = ['c-zodiac','c-interests','c-lang','c-time','c-age','c-last','c-status'];
+let prog = 0, animating = false, targets = [];
 
 function cardCtr(id){
-  const r=document.getElementById(id).getBoundingClientRect();
-  return{x:r.left+r.width/2,y:r.top+r.height/2};
+  const r = document.getElementById(id).getBoundingClientRect();
+  return { x: r.left + r.width/2, y: r.top + r.height/2 };
 }
 
 function drawLines(p){
-  lctx.clearRect(0,0,lc.width,lc.height);
-  const cx=lc.width/2,cy=lc.height/2;
+  lctx.clearRect(0, 0, lc.width, lc.height);
+  const cx = lc.width/2, cy = lc.height/2;
 
-  // center glow
-  const g=lctx.createRadialGradient(cx,cy,0,cx,cy,20);
+  const g = lctx.createRadialGradient(cx,cy,0,cx,cy,20);
   g.addColorStop(0,'rgba(167,139,250,0.5)');
   g.addColorStop(1,'rgba(167,139,250,0)');
-  lctx.beginPath();lctx.arc(cx,cy,20,0,Math.PI*2);
-  lctx.fillStyle=g;lctx.fill();
-  lctx.beginPath();lctx.arc(cx,cy,3.5,0,Math.PI*2);
-  lctx.fillStyle='rgba(167,139,250,0.9)';lctx.fill();
+  lctx.beginPath(); lctx.arc(cx,cy,20,0,Math.PI*2);
+  lctx.fillStyle = g; lctx.fill();
+  lctx.beginPath(); lctx.arc(cx,cy,3.5,0,Math.PI*2);
+  lctx.fillStyle = 'rgba(167,139,250,0.9)'; lctx.fill();
 
-  targets.forEach((t,i)=>{
-    const delay=i/targets.length*0.35;
-    const lp=Math.max(0,Math.min(1,(p-delay)/(1-delay)));
-    if(lp<=0)return;
-    const tx=cx+(t.x-cx)*lp;
-    const ty=cy+(t.y-cy)*lp;
+  targets.forEach((t, i) => {
+    const delay = i/targets.length*0.35;
+    const lp = Math.max(0, Math.min(1, (p-delay)/(1-delay)));
+    if(lp <= 0) return;
+    const tx = cx + (t.x-cx)*lp;
+    const ty = cy + (t.y-cy)*lp;
 
-    lctx.beginPath();lctx.moveTo(cx,cy);lctx.lineTo(tx,ty);
-    lctx.strokeStyle='rgba(167,139,250,0.2)';
-    lctx.lineWidth=1;lctx.setLineDash([4,7]);lctx.stroke();lctx.setLineDash([]);
+    lctx.beginPath(); lctx.moveTo(cx,cy); lctx.lineTo(tx,ty);
+    lctx.strokeStyle = 'rgba(167,139,250,0.2)';
+    lctx.lineWidth = 1; lctx.setLineDash([4,7]); lctx.stroke(); lctx.setLineDash([]);
 
-    // traveling dot
-    lctx.beginPath();lctx.arc(tx,ty,3,0,Math.PI*2);
-    lctx.fillStyle='rgba(167,139,250,'+(lp*0.9).toFixed(2)+')';lctx.fill();
+    lctx.beginPath(); lctx.arc(tx,ty,3,0,Math.PI*2);
+    lctx.fillStyle = 'rgba(167,139,250,'+(lp*0.9).toFixed(2)+')'; lctx.fill();
 
-    // arrival glow
-    if(lp>0.92){
-      const ag=lctx.createRadialGradient(t.x,t.y,0,t.x,t.y,14);
+    if(lp > 0.92){
+      const ag = lctx.createRadialGradient(t.x,t.y,0,t.x,t.y,14);
       ag.addColorStop(0,'rgba(167,139,250,0.12)');
       ag.addColorStop(1,'rgba(167,139,250,0)');
-      lctx.beginPath();lctx.arc(t.x,t.y,14,0,Math.PI*2);
-      lctx.fillStyle=ag;lctx.fill();
+      lctx.beginPath(); lctx.arc(t.x,t.y,14,0,Math.PI*2);
+      lctx.fillStyle = ag; lctx.fill();
     }
   });
 }
 
 function animateLines(){
-  if(!animating)return;
-  prog=Math.min(prog+0.013,1);
+  if(!animating) return;
+  prog = Math.min(prog+0.013, 1);
   drawLines(prog);
-  if(prog<1)requestAnimationFrame(animateLines);
-  else animating=false;
+  if(prog < 1) requestAnimationFrame(animateLines);
+  else animating = false;
 }
 
 // ── Splash & Enter ─────────────────────────────────────
-const splash=document.getElementById('splash');
-const ORDER=['c-profile','c-zodiac','c-time','c-interests','c-age','c-lang','c-last','c-status'];
+const splash = document.getElementById('splash');
+const ORDER = ['c-profile','c-zodiac','c-time','c-interests','c-age','c-lang','c-last','c-status'];
 
-splash.addEventListener('click',()=>{
+splash.addEventListener('click', () => {
+  // ✅ Unmute and set volume here — this is inside a user gesture so browsers allow it
+  if(ytReady && ytPlayer) {
+    ytPlayer.unMute();
+    ytPlayer.setVolume(70);
+  } else {
+    // Player not ready yet — set a flag and unmute once it's ready
+    window._pendingUnmute = true;
+  }
+
   splash.classList.add('out');
-  setTimeout(()=>{
-    targets=CARD_IDS.map(id=>cardCtr(id));
-    prog=0;animating=true;
+  setTimeout(() => {
+    targets = CARD_IDS.map(id => cardCtr(id));
+    prog = 0; animating = true;
     animateLines();
-    ORDER.forEach((id,i)=>{
-      setTimeout(()=>{
-        const el=document.getElementById(id);
-        if(el)el.classList.add('show');
-      },100+i*100);
+    ORDER.forEach((id, i) => {
+      setTimeout(() => {
+        const el = document.getElementById(id);
+        if(el) el.classList.add('show');
+      }, 100 + i*100);
     });
-  },600);
-},{once:true});
+  }, 600);
+}, {once: true});
 
 // ── Clock & Age ────────────────────────────────────────
 function tick(){
-  const now=new Date();
-  const ist=new Date(now.toLocaleString('en-US',{timeZone:'Asia/Kolkata'}));
-  document.getElementById('clk').textContent=
-    String(ist.getHours()).padStart(2,'0')+':'+
-    String(ist.getMinutes()).padStart(2,'0')+':'+
+  const now = new Date();
+  const ist = new Date(now.toLocaleString('en-US',{timeZone:'Asia/Kolkata'}));
+  document.getElementById('clk').textContent =
+    String(ist.getHours()).padStart(2,'0') + ':' +
+    String(ist.getMinutes()).padStart(2,'0') + ':' +
     String(ist.getSeconds()).padStart(2,'0');
-  const diff=Math.floor((now-new Date('2008-10-23T00:00:00'))/1000);
-  const y=Math.floor(diff/(365.25*24*3600));
-  const rem=diff-Math.floor(y*365.25*24*3600);
-  const d=Math.floor(rem/(24*3600));
-  const rs=rem-d*24*3600;
-  const hh=Math.floor(rs/3600),mm=Math.floor((rs%3600)/60),ss=rs%60;
-  document.getElementById('age').textContent=
+  const diff = Math.floor((now - new Date('2008-10-23T00:00:00'))/1000);
+  const y = Math.floor(diff/(365.25*24*3600));
+  const rem = diff - Math.floor(y*365.25*24*3600);
+  const d = Math.floor(rem/(24*3600));
+  const rs = rem - d*24*3600;
+  const hh = Math.floor(rs/3600), mm = Math.floor((rs%3600)/60), ss = rs%60;
+  document.getElementById('age').textContent =
     y+'y '+d+'d '+String(hh).padStart(2,'0')+':'+String(mm).padStart(2,'0')+':'+String(ss).padStart(2,'0');
 }
-tick();setInterval(tick,1000);
+tick(); setInterval(tick, 1000);
 </script>
 </body>
 </html>
