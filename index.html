@@ -71,6 +71,21 @@ html,body{height:100%;background:#080810;overflow:hidden}
 .pquote{font-size:11px;color:rgba(255,255,255,0.28);font-style:italic;margin-top:8px;line-height:1.6}
 .lbtn{width:40px;height:40px;border-radius:11px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all 0.15s}
 .lbtn:hover{background:rgba(255,255,255,0.12);border-color:rgba(255,255,255,0.18)}
+
+/* Mute button */
+#mute-btn{
+  position:fixed;bottom:24px;right:24px;z-index:200;
+  width:44px;height:44px;border-radius:12px;
+  background:rgba(10,10,18,0.75);
+  border:1px solid rgba(255,255,255,0.1);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  display:none;align-items:center;justify-content:center;
+  cursor:pointer;transition:background 0.15s,border-color 0.15s;
+  box-shadow:0 4px 20px rgba(0,0,0,0.4)
+}
+#mute-btn.visible{display:flex}
+#mute-btn:hover{background:rgba(30,30,50,0.9);border-color:rgba(255,255,255,0.2)}
+#mute-btn svg{transition:opacity 0.15s}
 </style>
 </head>
 <body>
@@ -150,19 +165,35 @@ html,body{height:100%;background:#080810;overflow:hidden}
 
 </div>
 
+<!-- Mute Button -->
+<div id="mute-btn" title="Toggle mute">
+  <!-- Speaker on -->
+  <svg id="icon-sound" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.75)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+    <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
+    <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+  </svg>
+  <!-- Speaker muted -->
+  <svg id="icon-mute" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none">
+    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+    <line x1="23" y1="9" x2="17" y2="15"/>
+    <line x1="17" y1="9" x2="23" y2="15"/>
+  </svg>
+</div>
+
 <!-- YouTube IFrame API -->
 <script src="https://www.youtube.com/iframe_api"></script>
 <script>
 // ── YouTube Player ─────────────────────────────────────
-// Player is created AFTER user click so audio is allowed by the browser
 var ytPlayer;
 var ytApiReady = false;
 var userClicked = false;
+var isMuted = false;
 
 function onYouTubeIframeAPIReady(){
   ytApiReady = true;
-  // If user already clicked before API loaded, create player now
-  if(userClicked) createPlayer();
+  // Always create player immediately (muted) so video background loads
+  createPlayer();
 }
 
 function createPlayer(){
@@ -170,7 +201,7 @@ function createPlayer(){
     videoId: 'izXP5DV82AA',
     playerVars: {
       autoplay: 1,
-      mute: 0,          // NOT muted — safe because we're inside a user gesture chain
+      mute: 1,        // must start muted for autoplay to work
       controls: 0,
       loop: 1,
       playlist: 'izXP5DV82AA',
@@ -183,8 +214,12 @@ function createPlayer(){
     },
     events: {
       onReady: function(e) {
-        e.target.setVolume(70);
         e.target.playVideo();
+        // If user already clicked splash before player was ready, unmute now
+        if(userClicked) {
+          e.target.unMute();
+          e.target.setVolume(70);
+        }
       }
     }
   });
@@ -252,9 +287,17 @@ const splash = document.getElementById('splash');
 const ORDER = ['c-profile','c-zodiac','c-time','c-interests','c-age','c-lang','c-last','c-status'];
 
 splash.addEventListener('click', () => {
-  // ✅ Create the player HERE inside the user gesture — browser allows audio
+  // Mark user has interacted — this is a real user gesture
   userClicked = true;
-  if(ytApiReady) createPlayer();
+
+  // Unmute the player (browser allows this since we're in a click handler)
+  if(ytPlayer && ytPlayer.unMute) {
+    ytPlayer.unMute();
+    ytPlayer.setVolume(70);
+  }
+
+  // Show mute button
+  document.getElementById('mute-btn').classList.add('visible');
 
   splash.classList.add('out');
   setTimeout(() => {
@@ -269,6 +312,22 @@ splash.addEventListener('click', () => {
     });
   }, 600);
 }, {once: true});
+
+// ── Mute Button ────────────────────────────────────────
+document.getElementById('mute-btn').addEventListener('click', () => {
+  if(!ytPlayer || !ytPlayer.isMuted) return;
+  isMuted = !isMuted;
+  if(isMuted){
+    ytPlayer.mute();
+    document.getElementById('icon-sound').style.display = 'none';
+    document.getElementById('icon-mute').style.display = 'block';
+  } else {
+    ytPlayer.unMute();
+    ytPlayer.setVolume(70);
+    document.getElementById('icon-sound').style.display = 'block';
+    document.getElementById('icon-mute').style.display = 'none';
+  }
+});
 
 // ── Clock & Age ────────────────────────────────────────
 function tick(){
