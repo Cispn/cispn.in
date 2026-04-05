@@ -7,13 +7,21 @@
 <script>
 (function(){
   const name = "CisPn";
-  const frames = [];
-  for(let i=1;i<=name.length;i++) frames.push(name.slice(0,i)+'|');
-  for(let i=0;i<4;i++){ frames.push(name+'|'); frames.push(name+' '); }
-  for(let i=name.length;i>=0;i--) frames.push(name.slice(0,i)+'|');
-  for(let i=0;i<6;i++) frames.push(' ');
-  let f=0;
-  setInterval(()=>{ document.title=frames[f%frames.length]; f++; },150);
+  let i = 0;
+  // Type out first
+  const typing = setInterval(()=>{
+    document.title = name.slice(0, i+1) + '|';
+    i++;
+    if(i >= name.length){
+      clearInterval(typing);
+      // Then blink cursor forever
+      let show = true;
+      setInterval(()=>{
+        document.title = name + (show ? '|' : ' ');
+        show = !show;
+      }, 500);
+    }
+  }, 150);
 })();
 </script>
 <link rel="icon" href="biscuitfav.png"/>
