@@ -18,26 +18,26 @@ html,body{height:100%;background:#080810;overflow:hidden}
 #lc{position:fixed;inset:0;width:100%;height:100%;z-index:2;pointer-events:none}
 .scene{position:fixed;inset:0;z-index:3}
 
-/* Splash */
-#splash{
+/* ── Biscuit-style Splash ── */
+#audio-splash{
   position:fixed;inset:0;z-index:100;
   display:flex;flex-direction:column;align-items:center;justify-content:center;
-  gap:12px;cursor:pointer;
-  background:rgba(0,0,0,0.6);
-  transition:opacity 1s ease
+  gap:10px;cursor:pointer;
+  background:rgba(0,0,0,0.72);
+  backdrop-filter:blur(6px);
+  -webkit-backdrop-filter:blur(6px);
+  transition:opacity 0.6s ease
 }
-#splash.out{opacity:0;pointer-events:none}
-.sp-name{
-  font-size:64px;font-weight:800;color:#fff;letter-spacing:-4px;
-  text-shadow:0 0 60px rgba(255,255,255,0.15)
+#audio-splash.fade-out{opacity:0;pointer-events:none}
+.splash-title{
+  font-size:15px;font-weight:600;color:rgba(255,255,255,0.85);
+  letter-spacing:0.5px
 }
-.sp-line{width:60px;height:1px;background:rgba(255,255,255,0.2)}
-.sp-sub{font-size:11px;letter-spacing:6px;color:rgba(255,255,255,0.25);text-transform:uppercase}
-.sp-hint{
-  font-size:11px;color:rgba(255,255,255,0.18);margin-top:14px;
-  letter-spacing:2px;animation:pulse 2.5s ease-in-out infinite
+.splash-sub{
+  font-size:12px;color:rgba(255,255,255,0.3);letter-spacing:1px;
+  animation:splashpulse 2.2s ease-in-out infinite
 }
-@keyframes pulse{0%,100%{opacity:.18}50%{opacity:.55}}
+@keyframes splashpulse{0%,100%{opacity:.3}50%{opacity:.7}}
 
 /* Cards */
 .card{
@@ -85,7 +85,6 @@ html,body{height:100%;background:#080810;overflow:hidden}
 }
 #mute-btn.visible{display:flex}
 #mute-btn:hover{background:rgba(30,30,50,0.9);border-color:rgba(255,255,255,0.2)}
-#mute-btn svg{transition:opacity 0.15s}
 </style>
 </head>
 <body>
@@ -96,12 +95,10 @@ html,body{height:100%;background:#080810;overflow:hidden}
 <!-- Lines canvas -->
 <canvas id="lc"></canvas>
 
-<!-- Splash -->
-<div id="splash">
-  <div class="sp-name">CisPn</div>
-  <div class="sp-line"></div>
-  <div class="sp-sub">cispn.in</div>
-  <div class="sp-hint">· click anywhere to enter ·</div>
+<!-- Biscuit-style Splash -->
+<div id="audio-splash">
+  <div class="splash-title">CisPn</div>
+  <div class="splash-sub">Press anywhere to continue</div>
 </div>
 
 <!-- Cards -->
@@ -167,13 +164,11 @@ html,body{height:100%;background:#080810;overflow:hidden}
 
 <!-- Mute Button -->
 <div id="mute-btn" title="Toggle mute">
-  <!-- Speaker on -->
   <svg id="icon-sound" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.75)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
     <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
     <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
     <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
   </svg>
-  <!-- Speaker muted -->
   <svg id="icon-mute" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none">
     <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
     <line x1="23" y1="9" x2="17" y2="15"/>
@@ -186,22 +181,16 @@ html,body{height:100%;background:#080810;overflow:hidden}
 <script>
 // ── YouTube Player ─────────────────────────────────────
 var ytPlayer;
-var ytApiReady = false;
+var ytPlayerReady = false;
 var userClicked = false;
 var isMuted = false;
 
 function onYouTubeIframeAPIReady(){
-  ytApiReady = true;
-  // Always create player immediately (muted) so video background loads
-  createPlayer();
-}
-
-function createPlayer(){
   ytPlayer = new YT.Player('player', {
     videoId: 'izXP5DV82AA',
     playerVars: {
       autoplay: 1,
-      mute: 1,        // must start muted for autoplay to work
+      mute: 1,           // must start muted for browser autoplay
       controls: 0,
       loop: 1,
       playlist: 'izXP5DV82AA',
@@ -210,15 +199,25 @@ function createPlayer(){
       showinfo: 0,
       modestbranding: 1,
       iv_load_policy: 3,
-      disablekb: 1
+      disablekb: 1,
+      start: 0           // always restart from 0 on each page load/reload
     },
     events: {
       onReady: function(e) {
+        ytPlayerReady = true;
+        e.target.seekTo(0);  // force restart from beginning every reload
         e.target.playVideo();
-        // If user already clicked splash before player was ready, unmute now
+        // if splash was already dismissed before player was ready, unmute now
         if(userClicked) {
           e.target.unMute();
           e.target.setVolume(70);
+        }
+      },
+      onStateChange: function(e) {
+        // restart if video ends (loop fallback)
+        if(e.data === YT.PlayerState.ENDED) {
+          e.target.seekTo(0);
+          e.target.playVideo();
         }
       }
     }
@@ -282,24 +281,27 @@ function animateLines(){
   else animating = false;
 }
 
-// ── Splash & Enter ─────────────────────────────────────
-const splash = document.getElementById('splash');
+// ── Splash (Biscuit-style) ─────────────────────────────
+const splash = document.getElementById('audio-splash');
 const ORDER = ['c-profile','c-zodiac','c-time','c-interests','c-age','c-lang','c-last','c-status'];
 
-splash.addEventListener('click', () => {
-  // Mark user has interacted — this is a real user gesture
+function dismissSplash(){
   userClicked = true;
 
-  // Unmute the player (browser allows this since we're in a click handler)
-  if(ytPlayer && ytPlayer.unMute) {
+  // unmute inside a real user gesture — browser allows audio here
+  if(ytPlayerReady && ytPlayer) {
     ytPlayer.unMute();
     ytPlayer.setVolume(70);
   }
 
-  // Show mute button
+  // show mute button
   document.getElementById('mute-btn').classList.add('visible');
 
-  splash.classList.add('out');
+  // Biscuit fade-out pattern: add class → wait for transition → remove element
+  splash.classList.add('fade-out');
+  splash.addEventListener('transitionend', () => { splash.remove(); }, { once: true });
+
+  // animate cards in after fade
   setTimeout(() => {
     targets = CARD_IDS.map(id => cardCtr(id));
     prog = 0; animating = true;
@@ -310,22 +312,25 @@ splash.addEventListener('click', () => {
         if(el) el.classList.add('show');
       }, 100 + i*100);
     });
-  }, 600);
-}, {once: true});
+  }, 400);
+}
+
+splash.addEventListener('click',   dismissSplash, { once: true });
+splash.addEventListener('keydown', dismissSplash, { once: true });
 
 // ── Mute Button ────────────────────────────────────────
 document.getElementById('mute-btn').addEventListener('click', () => {
-  if(!ytPlayer || !ytPlayer.isMuted) return;
+  if(!ytPlayer) return;
   isMuted = !isMuted;
   if(isMuted){
     ytPlayer.mute();
     document.getElementById('icon-sound').style.display = 'none';
-    document.getElementById('icon-mute').style.display = 'block';
+    document.getElementById('icon-mute').style.display  = 'block';
   } else {
     ytPlayer.unMute();
     ytPlayer.setVolume(70);
     document.getElementById('icon-sound').style.display = 'block';
-    document.getElementById('icon-mute').style.display = 'none';
+    document.getElementById('icon-mute').style.display  = 'none';
   }
 });
 
