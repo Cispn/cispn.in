@@ -154,15 +154,23 @@ html,body{height:100%;background:#080810;overflow:hidden}
 <script src="https://www.youtube.com/iframe_api"></script>
 <script>
 // ── YouTube Player ─────────────────────────────────────
+// Player is created AFTER user click so audio is allowed by the browser
 var ytPlayer;
-var ytReady = false;
+var ytApiReady = false;
+var userClicked = false;
 
 function onYouTubeIframeAPIReady(){
+  ytApiReady = true;
+  // If user already clicked before API loaded, create player now
+  if(userClicked) createPlayer();
+}
+
+function createPlayer(){
   ytPlayer = new YT.Player('player', {
     videoId: 'izXP5DV82AA',
     playerVars: {
       autoplay: 1,
-      mute: 1,          // start muted so browser allows autoplay
+      mute: 0,          // NOT muted — safe because we're inside a user gesture chain
       controls: 0,
       loop: 1,
       playlist: 'izXP5DV82AA',
@@ -175,8 +183,8 @@ function onYouTubeIframeAPIReady(){
     },
     events: {
       onReady: function(e) {
+        e.target.setVolume(70);
         e.target.playVideo();
-        ytReady = true;
       }
     }
   });
@@ -244,14 +252,9 @@ const splash = document.getElementById('splash');
 const ORDER = ['c-profile','c-zodiac','c-time','c-interests','c-age','c-lang','c-last','c-status'];
 
 splash.addEventListener('click', () => {
-  // ✅ Unmute and set volume here — this is inside a user gesture so browsers allow it
-  if(ytReady && ytPlayer) {
-    ytPlayer.unMute();
-    ytPlayer.setVolume(70);
-  } else {
-    // Player not ready yet — set a flag and unmute once it's ready
-    window._pendingUnmute = true;
-  }
+  // ✅ Create the player HERE inside the user gesture — browser allows audio
+  userClicked = true;
+  if(ytApiReady) createPlayer();
 
   splash.classList.add('out');
   setTimeout(() => {
