@@ -1,0 +1,5 @@
+/* Remove outline for social icon links */
+.social-link:focus, .social-link:active {
+  outline: none !important;
+  box-shadow: none !important;
+}
