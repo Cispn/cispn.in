@@ -153,7 +153,7 @@ export default function App() {
       <video
         ref={videoRef}
         className="absolute inset-0 h-full w-full object-cover"
-        src="https://cispn.in/snaptik_7629726366056959265_hd.mp4"
+        src="https://raw.githubusercontent.com/cispn/YOUR_REPO/main/YOUR_VIDEO.mp4"
         loop
         autoPlay
         muted
