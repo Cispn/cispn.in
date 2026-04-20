@@ -1,8 +1,3 @@
-
- * @license
- * SPDX-License-Identifier: Apache-2.0
- */
-
 import { motion, AnimatePresence } from "motion/react";
 import { useEffect, useState, useRef } from "react";
 import {
