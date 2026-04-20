@@ -152,12 +152,9 @@ export default function App() {
     return () => clearInterval(interval);
   }, []);
 
-  // Handle Views Counter
+  // Handle Views Counter - Locked to 67
   useEffect(() => {
-    const currentViews = parseInt(localStorage.getItem("bio_views") || "0", 10);
-    const newViews = currentViews + 1;
-    localStorage.setItem("bio_views", newViews.toString());
-    setViewCount(newViews);
+    setViewCount(67,000);;
   }, []);
 
   const discordStatus = lanyard?.data?.discord_status || "offline";
@@ -176,15 +173,22 @@ export default function App() {
     <div className="relative h-screen w-screen overflow-hidden font-sans text-white">
       {/* Background Video */}
       {hasEntered && (
-        <video
-          ref={videoRef}
-          className="absolute inset-0 h-full w-full object-cover"
-          src={BACKGROUND_VIDEOS[currentBgIndex]}
-          loop
-          autoPlay
-          muted={isMuted}
-          playsInline
-        />
+        <AnimatePresence mode="wait">
+          <motion.video
+            key={currentBgIndex}
+            ref={videoRef}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.5, ease: "easeInOut" }}
+            className="absolute inset-0 h-full w-full object-cover"
+            src={BACKGROUND_VIDEOS[currentBgIndex]}
+            loop
+            autoPlay
+            muted={isMuted}
+            playsInline
+          />
+        </AnimatePresence>
       )}
 
       {/* Dark Overlay for depth */}
