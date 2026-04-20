@@ -154,7 +154,7 @@ export default function App() {
 
   // Handle Views Counter - Locked to 67
   useEffect(() => {
-    setViewCount(67,000);;
+    setViewCount(67);
   }, []);
 
   const discordStatus = lanyard?.data?.discord_status || "offline";
