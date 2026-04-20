@@ -101,12 +101,12 @@ const AVATAR_URL = `https://cdn.discordapp.com/avatars/${STATIC_DATA.id}/${STATI
 const BANNER_URL = `https://cdn.discordapp.com/banners/${STATIC_DATA.id}/${STATIC_DATA.banner}.png`;
 
 const BACKGROUND_VIDEOS = [
-  "https://cispn.in/vid/snaptik_7629726366056959265_hd.mp4",
-  "https://cispn.in/vid/LIKE_HIM_-_TYLER_THE_CREATOR_CHROMAKOPIA_MOGRAPH_EDIT.mp4",
-  "https://cispn.in/vid/Video%20Project%201.mp4",
-  "https://cispn.in/vid/3118cf8c-7575-4f26-aac2-d9e37e61bc46.mp4",
-  "https://cispn.in/vid/SaveTik.io_7605545859903769864.mp4",
-  "https://cispn.in/vid/Video%20Project%201%20%281%29.mp4",
+  "/vid/snaptik_7629726366056959265_hd.mp4",
+  "/vid/LIKE_HIM_-_TYLER_THE_CREATOR_CHROMAKOPIA_MOGRAPH_EDIT.mp4",
+  "/vid/Video%20Project%201.mp4",
+  "/vid/3118cf8c-7575-4f26-aac2-d9e37e61bc46.mp4",
+  "/vid/SaveTik.io_7605545859903769864.mp4",
+  "/vid/Video%20Project%201%20%281%29.mp4",
 ];
 
 // --- Components ---
