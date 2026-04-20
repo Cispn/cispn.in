@@ -1,4 +1,4 @@
-Access-Control-Allow-Origin: */**
+
  * @license
  * SPDX-License-Identifier: Apache-2.0
  */
