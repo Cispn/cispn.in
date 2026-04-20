@@ -114,6 +114,7 @@ export default function App() {
   const [viewCount, setViewCount] = useState(0);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [currentBgIndex, setCurrentBgIndex] = useState(0);
+  const [isBgLoading, setIsBgLoading] = useState(false);
 
   // Handle Entrance
   const handleEnter = () => {
@@ -171,6 +172,11 @@ export default function App() {
 
   return (
     <div className="relative h-screen w-screen overflow-hidden font-sans text-white">
+      {/* Static Black Background - prevents white flash during transitions */}
+      {hasEntered && (
+        <div className="absolute inset-0 bg-black" />
+      )}
+
       {/* Background Video */}
       {hasEntered && (
         <AnimatePresence mode="wait">
@@ -187,6 +193,7 @@ export default function App() {
             autoPlay
             muted={isMuted}
             playsInline
+            onLoadedData={() => setIsBgLoading(false)}
           />
         </AnimatePresence>
       )}
@@ -251,11 +258,22 @@ export default function App() {
             <div className="absolute top-8 left-8 flex items-center gap-3">
               {/* Next Background Button */}
               <button
-                onClick={() => setCurrentBgIndex((prev) => (prev + 1) % BACKGROUND_VIDEOS.length)}
+                onClick={() => {
+                  setIsBgLoading(true);
+                  setCurrentBgIndex((prev) => (prev + 1) % BACKGROUND_VIDEOS.length);
+                }}
                 className="rounded-full bg-white/10 p-3 backdrop-blur-md transition-all hover:bg-white/20 active:scale-95"
                 title="Next Background"
               >
-                <SkipForward size={20} />
+                {isBgLoading ? (
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                    className="h-5 w-5 rounded-full border-2 border-white/30 border-t-white"
+                  />
+                ) : (
+                  <SkipForward size={20} />
+                )}
               </button>
               <div className="group relative flex items-center gap-2">
                 <button
