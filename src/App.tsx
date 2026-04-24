@@ -1,3 +1,4 @@
+
 import { motion, AnimatePresence } from "motion/react";
 import { useEffect, useState, useRef } from "react";
 import {
@@ -360,8 +361,8 @@ export default function App() {
                 {/* Bio */}
                 <div className="mt-4 space-y-3">
                   <p className="text-sm font-light leading-relaxed text-white/40">
-                    Full-stack dev who enjoys coding and gaming
-                        — not too serious just doing stuff I like for fun
+                    Full-stack developer from India. Passionate about creating
+                    clean, minimal, and performant web experiences.
                   </p>
 
                   {/* Activity */}
