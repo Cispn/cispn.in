@@ -361,7 +361,7 @@ export default function App() {
                 <div className="mt-4 space-y-3">
                   <p className="text-sm font-light leading-relaxed text-white/40">
                     Full-stack developer from India. Passionate about creating
-                    clean, minimal, and performant web experiences.
+                    clean, minimal, and performant web experiences!?~
                   </p>
 
                   {/* Activity */}
