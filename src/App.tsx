@@ -360,8 +360,9 @@ export default function App() {
                 {/* Bio */}
                 <div className="mt-4 space-y-3">
                   <p className="text-sm font-light leading-relaxed text-white/40">
-                    Full-stack dev from India who enjoys coding and gaming — not too serious, 
-                    just doing stuff I like for fun
+                    Full-stack dev from India who enjoys coding and gaming
+                              — not too serious, just doing stuff I like for fun
+                    
                   </p>
 
                   {/* Activity */}
