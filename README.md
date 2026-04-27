@@ -2,7 +2,7 @@
 
 > A minimal, aesthetic personal bio page with live Discord presence, real-time Spotify lyrics, and dynamic video backgrounds.
 
-![Preview]()
+![Preview]( "vid/preview.png")
 
 ---
 
