@@ -22,7 +22,7 @@ import {
 // --- Constants ---
 const BACKGROUND_VIDEOS = [
   "/vid/snaptik_7629726366056959265_hd.mp4",
-  "/vid/castexzy_edits_14050206_102711184.mp4",
+  "/vid/castezy.edits_14050206_102711184.mp4",
   "/vid/Video%20Project%201.mp4",
   "/vid/3118cf8c-7575-4f26-aac2-d9e37e61bc46.mp4",
   "/vid/SaveTik.io_7605545859903769864.mp4",
