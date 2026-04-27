@@ -200,6 +200,19 @@ export default function App() {
     setVideoIndex((prev) => (prev + 1) % BACKGROUND_VIDEOS.length);
   };
 
+  const handlePrevious = () => {
+    setVideoIndex((prev) => (prev - 1 + BACKGROUND_VIDEOS.length) % BACKGROUND_VIDEOS.length);
+  };
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowRight') handleSkip();
+      if (e.key === 'ArrowLeft') handlePrevious();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
   useEffect(() => {
     if (videoRef.current) {
       videoRef.current.volume = volume;
@@ -402,19 +415,37 @@ export default function App() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="lg:col-span-6 flex flex-col gap-6"
+            className="lg:col-span-6 flex flex-col gap-6 group/card"
           >
             <div className="bg-white/5 backdrop-blur-3xl rounded-[3rem] border border-white/10 overflow-hidden flex flex-col min-h-[500px]">
               {lanyard?.spotify ? (
                 <>
                   {/* Spotify Header */}
                   <div className="p-8 pb-4 flex items-center justify-between border-b border-white/5">
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-4">
                       <div className="w-10 h-10 rounded-full bg-[#1DB954]/10 flex items-center justify-center">
                         <Music size={18} className="text-[#1DB954]" />
                       </div>
                       <div className="flex flex-col">
-                        <span className="text-lg font-bold tracking-tight">{lanyard.spotify.song}</span>
+                        <div className="flex items-center gap-3">
+                          <span className="text-lg font-bold tracking-tight">{lanyard.spotify.song}</span>
+                          <div className="flex items-center gap-1.5 opacity-0 group-hover/card:opacity-100 transition-opacity">
+                            <button 
+                              onClick={handlePrevious}
+                              className="p-1 hover:text-white text-neutral-500 transition-colors cursor-pointer"
+                              title="Previous Video"
+                            >
+                              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                            </button>
+                            <button 
+                              onClick={handleSkip}
+                              className="p-1 hover:text-white text-neutral-500 transition-colors cursor-pointer"
+                              title="Next Video"
+                            >
+                              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                            </button>
+                          </div>
+                        </div>
                         <span className="text-xs text-neutral-500 italic">{lanyard.spotify.artist}</span>
                       </div>
                     </div>
