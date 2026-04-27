@@ -1,31 +1,20 @@
 <div align="center">
-<img width="1200" height="475" alt="Preview" src="./preview.png" />
+<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
 </div>
 
-# cispn.in — Personal Bio Page
+# Run and deploy your AI Studio app
 
-> A minimal, aesthetic personal bio page with live Discord presence, real-time Spotify lyrics, and dynamic video backgrounds.
+This contains everything you need to run your app locally.
+
+View your app in AI Studio: https://ai.studio/apps/395c3d1b-f685-4830-845f-8603684180ab
 
 ## Run Locally
 
-**Prerequisites:** Node.js
+**Prerequisites:**  Node.js
+
 
 1. Install dependencies:
    `npm install`
-2. Run the app:
+2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
+3. Run the app:
    `npm run dev`
-
-## Features
-
-- Live Discord presence, activity & status via [Lanyard](https://github.com/Phineas/lanyard)
-- Real-time Spotify lyrics synced to playback via [lrclib](https://lrclib.net)
-- Dynamic video backgrounds with volume control & skip
-- Typewriter effect, animated about section, view counter
-
-## Stack
-
-React · TypeScript · Vite · Tailwind CSS · Framer Motion
-
-## Author
-
-**CisPn** — [github.com/cispn](https://github.com/cispn)
