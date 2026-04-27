@@ -71,7 +71,7 @@ npm run dev
 
 ---
 
-## Author
+## Socials
 
 **CisPn**
 
