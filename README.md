@@ -6,7 +6,6 @@
 
 > A minimal, aesthetic personal bio page with live Discord presence, real-time Spotify lyrics, and dynamic video backgrounds
 
----
 
 ## Features
 
@@ -32,7 +31,6 @@
 - Local time display (IST)
 - Smooth entry overlay — click to enter
 
----
 
 ## Stack
 
@@ -45,11 +43,9 @@
 | Lanyard API | Discord presence |
 | lrclib API | Synced lyrics |
 
----
 
 ## Project Structure
 
-```
 /
 ├── src/
 │   ├── App.tsx        # Main component — all UI and logic
@@ -60,9 +56,7 @@
 ├── index.html
 ├── vite.config.ts
 └── package.json
-```
 
----
 
 ## Author
 
