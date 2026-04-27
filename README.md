@@ -4,7 +4,8 @@
 
 # cispn.in — Personal Bio Page
 
-> A minimal, aesthetic personal bio page with live Discord presence, real-time Spotify lyrics, and dynamic video backgrounds
+> A minimal, aesthetic personal bio page with live Discord presence, real-time Spotify lyrics, and dynamic video backgrounds.
+
 
 
 ## Features
@@ -46,6 +47,7 @@
 
 ## Project Structure
 
+```
 /
 ├── src/
 │   ├── App.tsx        # Main component — all UI and logic
@@ -56,6 +58,15 @@
 ├── index.html
 ├── vite.config.ts
 └── package.json
+```
+
+
+## Running Locally
+
+```bash
+npm install
+npm run dev
+```
 
 
 ## Author
