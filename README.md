@@ -1,8 +1,8 @@
-# cispn.xyz — Personal Bio Page
+# cispn.in — Personal Bio Page
 
 > A minimal, aesthetic personal bio page with live Discord presence, real-time Spotify lyrics, and dynamic video backgrounds.
 
-![Preview](./preview.png)
+![Preview]()
 
 ---
 
