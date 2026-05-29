@@ -24,7 +24,6 @@ const BACKGROUND_VIDEOS = [
   "/vid/snaptik_7629726366056959265_hd.mp4",
   "/vid/Video%20Project%201.mp4",
   "/vid/3118cf8c-7575-4f26-aac2-d9e37e61bc46.mp4",
-  "/vid/SaveTik.io_7605545859903769864.mp4",
   "/vid/Video%20Project%201%20%281%29.mp4"
 ];
 
